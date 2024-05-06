@@ -23,5 +23,37 @@ gradlePlugin {
             id = "myrunique.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidApplicationCompose") {
+            id = "myrunique.android.application.compose"
+            implementationClass = "AndroidApplicationComposeConventionPlugin"
+        }
+        register("androidLibrary") {
+            id = "myrunique.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("androidLibraryCompose") {
+            id = "myrunique.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidFeatureUi") {
+            id = "myrunique.android.feature.ui"
+            implementationClass = "AndroidFeatureUiConventionPlugin"
+        }
+
+        register("androidRoom") {
+            id = "myrunique.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
+
+        register("jvmLibrary") {
+            id = "myrunique.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
+
+        register("jvmKtor") {
+            id = "myrunique.jvm.ktor"
+            implementationClass = "JvmKtorConventionPlugin"
+        }
+
     }
 }

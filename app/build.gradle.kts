@@ -1,6 +1,7 @@
 plugins {
+    alias(libs.plugins.myrunique.android.application.compose)
+    alias(libs.plugins.myrunique.jvm.ktor)
     alias(libs.plugins.mapsplatform.secrets.plugin)
-    alias(libs.plugins.myrunique.android.application)
 }
 
 android {
@@ -11,12 +12,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
