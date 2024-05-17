@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="myrunique">MyRunique</string>
+    <string name="welcome_to_myrunique">Welcome to MyRunique</string>
+    <string name="myrunique_description">Track your runs, set goals and achieve fittness milestones with our intuitve app.</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+</resources>
