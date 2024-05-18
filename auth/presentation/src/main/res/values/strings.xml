@@ -5,4 +5,16 @@
     <string name="myrunique_description">Track your runs, set goals and achieve fittness milestones with our intuitve app.</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_in">Sign in</string>
+    <string name="create_account">Create account</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="login">Login</string>
+    <string name="example_email">example@example.com</string>
+    <string name="email_title">Email</string>
+    <string name="valid_email_text">must be a valid email</string>
+    <string name="password">Password</string>
+    <string name="at_least_x_characters">At least %d characters</string>
+    <string name="at_least_one_number">At least one number</string>
+    <string name="has_lowercase">Contains lowercase character</string>
+    <string name="has_uppercase">Contains uppercase character</string>
+    <string name="register_button_text">Register</string>
 </resources>
