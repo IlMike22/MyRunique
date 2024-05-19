@@ -17,4 +17,6 @@
     <string name="has_lowercase">Contains lowercase character</string>
     <string name="has_uppercase">Contains uppercase character</string>
     <string name="register_button_text">Register</string>
+    <string name="error_email_in_use">Your email is already in use.</string>
+    <string name="registration_success">Your registration was successful! You can login now.</string>
 </resources>
