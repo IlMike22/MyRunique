@@ -19,4 +19,9 @@
     <string name="register_button_text">Register</string>
     <string name="error_email_in_use">Your email is already in use.</string>
     <string name="registration_success">Your registration was successful! You can login now.</string>
+    <string name="hi_there">Hi there</string>
+    <string name="myrunique_welcome_text">Welcome to your ultimate running companion! Track analyse and conquer your runs!</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="register">Register here</string>
+    <string name="youre_logged_in">You\'re logged in!</string>
 </resources>
