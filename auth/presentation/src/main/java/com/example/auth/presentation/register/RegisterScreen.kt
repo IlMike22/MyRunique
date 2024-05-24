@@ -75,7 +75,12 @@ fun RegisterScreenRoot(
     }
     RegisterScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction
+        onAction = {action ->
+            when (action) {
+                RegisterAction.OnSignInClick -> onSignInClick()
+                else ->  viewModel.onAction(action)
+            }
+        }
     )
 }
 
@@ -109,7 +114,7 @@ fun RegisterScreen(
                 ) {
                     append(stringResource(R.string.already_have_account) + " ")
                     pushStringAnnotation(
-                        tag = "clickable text",
+                        tag = "clickable_text",
                         annotation = stringResource(id = R.string.login)
                     )
                     withStyle(

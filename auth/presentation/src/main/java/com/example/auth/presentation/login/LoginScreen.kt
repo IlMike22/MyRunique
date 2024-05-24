@@ -83,8 +83,8 @@ private fun LoginScreen(
     GradientBackground {
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 32.dp)
                 .padding(top = 16.dp)
@@ -137,7 +137,7 @@ private fun LoginScreen(
                 ) {
                     append(stringResource(R.string.no_account) + " ")
                     pushStringAnnotation(
-                        tag = "clickable text",
+                        tag = "clickable_text",
                         annotation = stringResource(id = R.string.sign_up)
                     )
                     withStyle(

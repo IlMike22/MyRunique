@@ -85,7 +85,7 @@ fun MyRuniqueTextField(
             } else if (additionalInfo != null) {
                 Text(
                     text = additionalInfo,
-                    color = MaterialTheme.colorScheme.error,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )
             }
