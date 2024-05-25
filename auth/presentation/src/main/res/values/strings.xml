@@ -24,4 +24,5 @@
     <string name="no_account">Don\'t have an account?</string>
     <string name="register">Register here</string>
     <string name="youre_logged_in">You\'re logged in!</string>
+    <string name="wrong_email_or_password">Your email or password is incorrect.</string>
 </resources>

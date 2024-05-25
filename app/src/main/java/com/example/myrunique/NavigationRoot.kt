@@ -1,7 +1,9 @@
 package com.example.myrunique
 
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -21,6 +23,7 @@ fun NavigationRoot(
         startDestination = "auth"
     ) {
         authGraph(navController)
+        runGraph(navController)
     }
 }
 
@@ -49,13 +52,13 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
                         }
                         restoreState = true
                     }
-                                },
+                },
                 onSuccessfulRegistration = { navController.navigate("login") }
             )
         }
         composable(route = "login") {
             LoginScreenRoot(
-                onLoginSuccess= {
+                onLoginSuccess = {
                     navController.navigate("run") {
                         popUpTo("auth") {
                             inclusive = true
@@ -72,6 +75,17 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
                     }
                 }
             )
+        }
+    }
+}
+
+private fun NavGraphBuilder.runGraph(navController: NavController) {
+    navigation(
+        route = "run",
+        startDestination = "run_overview"
+    ) {
+        composable(route = "run_overview") {
+            Text(text = "Run overview")
         }
     }
 }
