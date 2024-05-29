@@ -80,7 +80,7 @@ class LoginViewModel(
                     }
                 }
 
-                is Result.Success -> LoginEvent.LoginSuccess
+                is Result.Success -> eventChannel.send(LoginEvent.LoginSuccess)
             }
         }
     }

@@ -2,4 +2,6 @@
 <resources>
     <string name="show_password">show password</string>
     <string name="hide_password">hide password</string>
+    <string name="back">Back</string>
+    <string name="open_menu">open menu</string>
 </resources>
