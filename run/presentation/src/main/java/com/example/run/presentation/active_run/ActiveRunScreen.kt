@@ -33,6 +33,7 @@ import com.example.core.presentation.designsystem.components.MyRuniqueOutlinedAc
 import com.example.core.presentation.designsystem.components.MyRuniqueScaffold
 import com.example.core.presentation.designsystem.components.MyRuniqueToolbar
 import com.example.run.presentation.R
+import com.example.run.presentation.active_run.maps.TrackerMap
 import com.example.run.presentation.components.RunDataCard
 import com.example.run.presentation.util.hasLocationPermission
 import com.example.run.presentation.util.hasNotificationPermission
@@ -140,6 +141,12 @@ fun ActiveRunScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
+            TrackerMap(
+                isRunFinished = state.isRunFinished,
+                currentLocation = state.currentLocation,
+                locations = state.runData.locations, onSnapshot = {},
+                modifier = Modifier.fillMaxSize()
+            )
             RunDataCard(
                 elapsedTime = state.elapsedTime,
                 runData = state.runData,
