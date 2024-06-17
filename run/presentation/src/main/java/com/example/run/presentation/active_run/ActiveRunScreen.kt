@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.core.presentation.designsystem.MyRuniqueTheme
 import com.example.core.presentation.designsystem.StartIcon
 import com.example.core.presentation.designsystem.StopIcon
+import com.example.core.presentation.designsystem.components.MyRuniqueActionButton
 import com.example.core.presentation.designsystem.components.MyRuniqueDialog
 import com.example.core.presentation.designsystem.components.MyRuniqueFloatingActionButton
 import com.example.core.presentation.designsystem.components.MyRuniqueOutlinedActionButton
@@ -107,7 +107,7 @@ fun ActiveRunScreen(
             )
         )
 
-        if (!showLocationRationale && !showNotificationRationale ) {
+        if (!showLocationRationale && !showNotificationRationale) {
             permissionLauncher.requestMyRuniquePermissions(context)
         }
 
@@ -156,6 +156,35 @@ fun ActiveRunScreen(
                     .fillMaxWidth()
             )
         }
+    }
+
+    if (!state.shouldTrack && state.hasStartedRunning) {
+        MyRuniqueDialog(
+            title = stringResource(id = R.string.running_is_paused),
+            onDismiss = {
+                onAction(ActiveRunAction.OnResumeRunClick)
+            },
+            description = stringResource(id = R.string.resume_or_finsih_run),
+            primaryButton = {
+                MyRuniqueActionButton(text = stringResource(R.string.resume),
+                    isLoading = false,
+                    onClick = {
+                        onAction(ActiveRunAction.OnResumeRunClick)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            },
+            secondaryButton = {
+                MyRuniqueOutlinedActionButton(
+                    text = stringResource(id = R.string.finish),
+                    isLoading = state.isSavingRun,
+                    onClick = {
+                        onAction(ActiveRunAction.OnFinishRunClick)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        )
     }
 
     if (state.showLocationPermissionRationale || state.showNotificationPermissionRationale) {
