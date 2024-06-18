@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.run.domain.RunningTracker
+import com.example.run.presentation.active_run.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +20,12 @@ import kotlinx.coroutines.flow.stateIn
 class ActiveRunViewModel(
     private val runningTracker: RunningTracker
 ) : ViewModel() {
-    var state by mutableStateOf(ActiveRunState())
+    var state by mutableStateOf(
+        ActiveRunState(
+            shouldTrack = ActiveRunService.isServiceActive && runningTracker.isTracking.value,
+            hasStartedRunning = ActiveRunService.isServiceActive
+        )
+    )
         private set
 
     private val eventChannel = Channel<ActiveRunEvent>()
@@ -54,21 +60,21 @@ class ActiveRunViewModel(
 
         runningTracker
             .currentLocation
-            .onEach {locationWithAttitude ->
+            .onEach { locationWithAttitude ->
                 state = state.copy(currentLocation = locationWithAttitude?.location)
             }
             .launchIn(viewModelScope)
 
         runningTracker
             .runData
-            .onEach {runData ->
+            .onEach { runData ->
                 state = state.copy(runData = runData)
             }
             .launchIn(viewModelScope)
 
         runningTracker
             .elapsedime
-            .onEach {time ->
+            .onEach { time ->
                 state = state.copy(elapsedTime = time)
             }
             .launchIn(viewModelScope)
@@ -82,15 +88,18 @@ class ActiveRunViewModel(
                     shouldTrack = true
                 )
             }
+
             ActiveRunAction.OnToggleRunClick -> {
                 state = state.copy(
                     hasStartedRunning = true,
                     shouldTrack = !state.shouldTrack
                 )
             }
+
             ActiveRunAction.OnBackClick -> {
                 state = state.copy(shouldTrack = false)
             }
+
             is ActiveRunAction.SubmitLocationPermissionInfo -> {
                 hasLocationPermission.value = action.acceptedLocationPermission
 
@@ -111,6 +120,13 @@ class ActiveRunViewModel(
                     showLocationPermissionRationale = false
                 )
             }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        if (!ActiveRunService.isServiceActive) {
+            runningTracker.stopObservingLocation()
         }
     }
 }
