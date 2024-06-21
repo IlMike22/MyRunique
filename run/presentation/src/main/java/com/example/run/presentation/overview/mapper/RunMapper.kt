@@ -6,7 +6,7 @@ import com.example.core.presentation.ui.toFormattedKm
 import com.example.core.presentation.ui.toFormattedKmh
 import com.example.core.presentation.ui.toFormattedMeters
 import com.example.core.presentation.ui.toformattedPace
-import com.example.run.presentation.overview.models.RunUi
+import com.example.run.presentation.overview.model.RunUi
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
