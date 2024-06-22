@@ -51,7 +51,7 @@ suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
     body: Request
 ): Result<Response, DataError.Network> {
     return safeCall {
-        post{
+        post {
             url(constructRoute(route))
             setBody(body)
         }
