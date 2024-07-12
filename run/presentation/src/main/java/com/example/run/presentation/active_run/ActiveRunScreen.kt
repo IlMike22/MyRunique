@@ -4,6 +4,7 @@ package com.example.run.presentation.active_run
 
 import android.Manifest
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,10 +42,11 @@ import com.example.run.presentation.util.hasNotificationPermission
 import com.example.run.presentation.util.shouldShowLocationPermissionRationale
 import com.example.run.presentation.util.shouldShowNotificationPermissionRationale
 import org.koin.androidx.compose.koinViewModel
+import java.io.ByteArrayOutputStream
 
 @Composable
 fun ActiveRunScreenRoot(
-    onServiceToggle: (isServiceRunning:Boolean) -> Unit,
+    onServiceToggle: (isServiceRunning: Boolean) -> Unit,
     viewModel: ActiveRunViewModel = koinViewModel()
 ) {
 
@@ -59,7 +61,7 @@ fun ActiveRunScreenRoot(
 @Composable
 fun ActiveRunScreen(
     state: ActiveRunState,
-    onServiceToggle: (isServiceRunning:Boolean) -> Unit,
+    onServiceToggle: (isServiceRunning: Boolean) -> Unit,
     onAction: (ActiveRunAction) -> Unit
 ) {
     val context = LocalContext.current
@@ -159,7 +161,18 @@ fun ActiveRunScreen(
             TrackerMap(
                 isRunFinished = state.isRunFinished,
                 currentLocation = state.currentLocation,
-                locations = state.runData.locations, onSnapshot = {},
+                locations = state.runData.locations,
+                onSnapshot = { bitmap ->
+                    val stream = ByteArrayOutputStream()
+                    stream.use {
+                        bitmap.compress(
+                            Bitmap.CompressFormat.JPEG,
+                            80,
+                            it
+                        )
+                    }
+                    onAction(ActiveRunAction.OnRunProcessed(stream.toByteArray()))
+                },
                 modifier = Modifier.fillMaxSize()
             )
             RunDataCard(
@@ -181,7 +194,8 @@ fun ActiveRunScreen(
             },
             description = stringResource(id = R.string.resume_or_finsih_run),
             primaryButton = {
-                MyRuniqueActionButton(text = stringResource(R.string.resume),
+                MyRuniqueActionButton(
+                    text = stringResource(R.string.resume),
                     isLoading = false,
                     onClick = {
                         onAction(ActiveRunAction.OnResumeRunClick)
