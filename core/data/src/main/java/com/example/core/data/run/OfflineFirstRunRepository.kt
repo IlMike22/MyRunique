@@ -1,5 +1,8 @@
 package com.example.core.data.run
 
+import com.example.core.database.dao.RunPendingSyncDao
+import com.example.core.database.mapper.toRun
+import com.example.core.domain.SessionStorage
 import com.example.core.domain.run.LocalRunDataSource
 import com.example.core.domain.run.RemoteRunDataSource
 import com.example.core.domain.run.Run
@@ -10,20 +13,25 @@ import com.example.core.domain.util.EmptyResult
 import com.example.core.domain.util.Result
 import com.example.core.domain.util.asEmptyDataResult
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class OfflineFirstRunRepository(
     private val localRunDataSource: LocalRunDataSource,
     private val remoteRunDataSource: RemoteRunDataSource,
-    private val applicationScope: CoroutineScope
-): RunRepository {
+    private val applicationScope: CoroutineScope,
+    private val runPendingSyncDao: RunPendingSyncDao,
+    private val sessionStorage: SessionStorage
+) : RunRepository {
     override fun getRuns(): Flow<List<Run>> {
         return localRunDataSource.getRuns()
     }
 
     override suspend fun fetchRuns(): EmptyResult<DataError> {
-        return when(val result = remoteRunDataSource.getRuns()) {
+        return when (val result = remoteRunDataSource.getRuns()) {
             is Result.Error -> result.asEmptyDataResult()
             is Result.Success -> {
                 applicationScope.async {
@@ -48,6 +56,7 @@ class OfflineFirstRunRepository(
             is Result.Error -> {
                 Result.Success(Unit) // TODO handle later
             }
+
             is Result.Success -> {
                 applicationScope.async {
                     localRunDataSource.upsertRun(remoteResult.data).asEmptyDataResult()
@@ -58,8 +67,64 @@ class OfflineFirstRunRepository(
 
     override suspend fun deleteRun(id: RunId) {
         localRunDataSource.deleteRun(id)
+
+        // Edge case: Run is created in offline mode and also deleted in offline mode!
+        // In that case we dont need to sync anything
+        val isPendingSync = runPendingSyncDao.getRunPendingSyncEntity(id) != null
+        if (isPendingSync) {
+            runPendingSyncDao.deleteRunPendingSyncEntity(id)
+            return
+        }
+
         val remoteResult = applicationScope.async {
             remoteRunDataSource.deleteRun(id)
         }.await()
+    }
+
+    override suspend fun syncPendingRuns() {
+        withContext(Dispatchers.IO) {
+            val userId = sessionStorage.get()?.userId ?: return@withContext
+
+            val createdRuns = async {
+                runPendingSyncDao.getAllRunPendingSyncEntities(userId)
+            }
+            val deletedRuns = async {
+                runPendingSyncDao.getAllDeletedRunSyncEntities(userId)
+            }
+
+            val createJobs = createdRuns
+                .await()
+                .map {
+                    launch {
+                        val run = it.run.toRun()
+                        when (remoteRunDataSource.postRun(run, it.mapPictureBytes)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    runPendingSyncDao.deleteRunPendingSyncEntity(it.runId)
+                                }.join()
+                            }
+                        }
+                    }
+                }
+
+            val deleteJobs = deletedRuns
+                .await()
+                .map {
+                    launch {
+                        when (remoteRunDataSource.deleteRun(it.runId)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    runPendingSyncDao.deleteDeletedRunSyncEntity(it.runId)
+                                }.join()
+                            }
+                        }
+                    }
+                }
+
+            createJobs.forEach { it.join() }
+            deleteJobs.forEach { it.join() }
+        }
     }
 }

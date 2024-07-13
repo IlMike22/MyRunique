@@ -13,9 +13,9 @@ import kotlinx.coroutines.launch
 
 class RunOverviewViewModel(
     private val repository: RunRepository
-): ViewModel() {
+) : ViewModel() {
     var state by mutableStateOf(RunOverviewState())
-    private set
+        private set
 
     init {
         repository.getRuns().onEach { runs ->
@@ -24,6 +24,7 @@ class RunOverviewViewModel(
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
+            repository.syncPendingRuns()
             repository.fetchRuns()
         }
     }
@@ -37,6 +38,7 @@ class RunOverviewViewModel(
                     repository.deleteRun(action.runUi.id)
                 }
             }
+
             else -> Unit
         }
     }
