@@ -6,6 +6,7 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.core.domain.util.DataError
 import com.example.core.presentation.designsystem.MyRuniqueTheme
 import com.example.core.presentation.designsystem.StartIcon
 import com.example.core.presentation.designsystem.StopIcon
@@ -33,6 +35,7 @@ import com.example.core.presentation.designsystem.components.MyRuniqueFloatingAc
 import com.example.core.presentation.designsystem.components.MyRuniqueOutlinedActionButton
 import com.example.core.presentation.designsystem.components.MyRuniqueScaffold
 import com.example.core.presentation.designsystem.components.MyRuniqueToolbar
+import com.example.core.presentation.ui.ObserveAsEvents
 import com.example.run.presentation.R
 import com.example.run.presentation.active_run.maps.TrackerMap
 import com.example.run.presentation.active_run.service.ActiveRunService
@@ -46,16 +49,38 @@ import java.io.ByteArrayOutputStream
 
 @Composable
 fun ActiveRunScreenRoot(
+    onFinish: () -> Unit,
+    onBack: () -> Unit,
     onServiceToggle: (isServiceRunning: Boolean) -> Unit,
     viewModel: ActiveRunViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
+    ObserveAsEvents(flow = viewModel.events) { event ->
+        when (event) {
+            is ActiveRunEvent.Error -> {
+                Toast.makeText(context, event.error.asString(context), Toast.LENGTH_LONG).show()
+            }
+            ActiveRunEvent.RunSaved -> onFinish()
+        }
+
+    }
 
     ActiveRunScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction,
-        onServiceToggle = onServiceToggle
+        onServiceToggle = onServiceToggle,
+        onAction = { action ->
+            when (action) {
+                ActiveRunAction.DismissRationaleDialog -> TODO()
+                ActiveRunAction.OnBackClick ->{
+                    if (!viewModel.state.hasStartedRunning) {
+                        onBack()
+                    }
+                }
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
-
 }
 
 @Composable
