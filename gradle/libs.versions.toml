@@ -125,6 +125,7 @@ myrunique-android-library = { id = "myrunique.android.library", version = "unspe
 myrunique-android-library-compose = { id = "myrunique.android.library.compose", version = "unspecified" }
 myrunique-android-feature-ui = { id = "myrunique.android.feature.ui", version = "unspecified" }
 myrunique-android-room = { id = "myrunique.android.room", version = "unspecified" }
+myrunique-android-dynamic-feature = { id = "myrunique.android.dynamic.feature", version = "unspecified" }
 myrunique-jvm-library = { id = "myrunique.jvm.library", version = "unspecified" }
 myrunique-jvm-ktor = { id = "myrunique.jvm.ktor", version = "unspecified" }
 
