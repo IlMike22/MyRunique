@@ -29,7 +29,7 @@ class MyRuniqueApp: Application() {
 
         startKoin {
             androidLogger()
-            androidContext(this@MyRuniqueApp),
+            androidContext(this@MyRuniqueApp)
             workManagerFactory()
             modules(
                 authDataModule,
