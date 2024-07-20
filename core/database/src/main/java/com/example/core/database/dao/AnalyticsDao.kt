@@ -1,7 +1,9 @@
 package com.example.core.database.dao
 
+import androidx.room.Dao
 import androidx.room.Query
 
+@Dao
 interface AnalyticsDao {
     @Query("SELECT SUM(distanceMeters) FROM runEntity")
     suspend fun getTotalDistance(): Int

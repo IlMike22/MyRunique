@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.myrunique.android.library)
+    alias(libs.plugins.myrunique.android.room)
 }
 
 android {
